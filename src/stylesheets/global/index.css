@@ -6,10 +6,25 @@
 *:before,
 *:after { box-sizing: border-box; }
 
+button:hover { cursor: pointer; }
+button:disabled:hover { cursor: not-allowed; }
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type=number] {
+  width: 2em;
+  height: 2em;
+  font-size: 1em;
+  font-family: sans-serif;
+  background-color: #FFF;
+  color: #333;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+  text-align: center;
 }
 
 body {
@@ -44,20 +59,40 @@ body {
 .flex-wrap { flex-wrap: wrap; }
 
 /*
-**  Max number input
+**  Overlay classes
 */
 
-.max-num > input[type=number] {
-  width: 2em;
-  height: 2em;
-  font-size: 1em;
-  font-family: sans-serif;
-  background-color: #FFF;
-  color: #333;
-  border: 1px solid #CCC;
-  border-radius: 1em;
-  text-align: center;
+div.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.7);
 }
+
+div.overlay > div {
+  width: 70%;
+  min-height: 60px;
+  padding: 25px;
+  border-radius: 20px;
+  background-color: #777;
+}
+
+div.overlay > div > div > button {
+  font-family: sans-serif;
+  font-size: 1em;
+  background-color: #FFF;
+  border-radius: 3px;
+  border: none;
+  margin: 5px;
+  padding: 3px 10px;
+}
+
+/*
+**  Max number input
+*/
 
 .max-num > p {
   font-size: 1em;
@@ -69,9 +104,10 @@ body {
 */
 
 div.character-wrapper {
-  width: 500px;
+  max-width: 90vw;
+  width: 550px;
   margin: 5px;
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #FFF;
   border-radius: 5px;
 }
@@ -82,4 +118,43 @@ div.char-line {
   margin: 5px 0;
 }
 
+div.char-title > p {
+  margin: 0 0 0 auto;
+  font-style: italic;
+}
+
+div.char-line.bad { color: red; }
+
+div.char-line.bad:after { content: " :)"; }
+
+div.char-line.bad > strong { color: #FFF; }
+
 div.char-line > div { margin-left: auto; }
+
+textarea.char-motivation {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px 20px;
+  font-size: 0.8em;
+  height: 5em;
+  border: none;
+  resize: none;
+  border-radius: 5px;
+  background-color: #777;
+  color: #FFF;
+  text-align: justify;
+}
+
+button.upgrade-level {
+  margin: 0 0 0 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0;
+  background-color: #FFF;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 12px;
+
+}

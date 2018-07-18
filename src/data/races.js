@@ -9,7 +9,7 @@ import { skills } from './skills'
 */
 
 // Clone
-const clone = {
+export const clone = {
   key: "clone",
   amt: 3,
   data: {
@@ -19,7 +19,7 @@ const clone = {
 }
 
 // Porkman
-const porkman = {
+export const porkman = {
   key: "porkman",
   amt: 3,
   data: {
@@ -29,7 +29,7 @@ const porkman = {
 }
 
 // Mantoid
-const mantoid = {
+export const mantoid = {
   key: "mantoid",
   amt: 3,
   data: {
@@ -39,7 +39,7 @@ const mantoid = {
 }
 
 // Cafaroid
-const cafaroid = {
+export const cafaroid = {
   key: "cafaroid",
   amt: 3,
   data: {

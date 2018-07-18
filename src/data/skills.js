@@ -48,5 +48,27 @@ export const skills = {
       name: `Armure (D${faces})`,
       description: `Dispose d'une protection naturelle, ou non. Sa protection est de 1D${faces}. Réduisez d'autant les blessures à chaque attaque.`
     }
+  },
+
+  // Brutal
+  brutal: {
+    key: "brutal",
+    fuse: () => { return {
+      name: "Super brutal",
+      description: "Le personnage inflige 2 blessures supplémentaires en combat."
+    }},
+    name: "Brutal",
+    description: "Le personnage inflige 1 blessure supplémentaire en combat."
+  },
+
+  // Resistance
+  resistance: function(arr) {
+    return {
+      key: "resistance",
+      elements: arr,
+      fuse: next => arr.concat(next),
+      name: `Résistance (${arr.join(', ')})`,
+      description: "Le personnage a droit à un jet de résistance avec avantage face au type de danger de blessures entre parenthèses. Une réussite annule l'effet."
+    }
   }
 }

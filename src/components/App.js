@@ -1,14 +1,20 @@
 // React core
 import React, { Component } from 'react'
 
+// Local components
+import Overlay from './Overlay'
+
 // Local functions
-import { exists }     from '../helpers/common'
-import { d12 }        from '../helpers/dice'
-import { getSkills }  from '../helpers/skills'
+import { exists }           from '../helpers/common'
+import { d12 }              from '../helpers/dice'
+import { getSkills }        from '../helpers/skills'
+import { store, retrieve }  from '../helpers/storage'
 
 // Local data
-import { races }    from '../data/races'
-import { classes }  from '../data/classes'
+import { races }              from '../data/races'
+import { classes }            from '../data/classes'
+import { prefixes, suffixes } from '../data/names'
+import { motivations }        from '../data/motivations'
 
 /*
 **  Main App component
@@ -29,7 +35,10 @@ class App extends Component {
   // Class constructor
   constructor(props) {
     super(props)
-    this.state = this.initialState
+    const data = retrieve()
+    this.state = Object.assign((exists(data) ? data : this.initialState), {
+      overlay: null,
+    })
   }
 
   // Main render
@@ -41,6 +50,7 @@ class App extends Component {
       <header>
         <h1>Mantoid Generator</h1>
       </header>
+      {this.state.overlay && <Overlay {...this.state.overlay}/>}
       <main className="flex-col center-v center-h">
         <button onClick={this.genChar} disabled={noGen}>Générer</button>
         {noGen && <p className="notice">Pas plus de 3 personnages !</p>}
@@ -62,17 +72,20 @@ class App extends Component {
     // Character object
     const character = {
       hash:       hash,
+      name:       prefixes[d12(this, hash) - 1] + suffixes[d12(this, hash) - 1],
       race:       races[d12(this, hash) - 1],
       charClass:  classes[d12(this, hash) - 1],
-      name:       "placeholder",
+      motivation: motivations[d12(this, hash) - 1],
       hp:         hp,
       hp_max:     hp,
-      skills:     []
+      skills:     [],
+      level:      0
     }
 
     const finalChar = getSkills(character, (d12(this, hash) + d12(this, hash)))
 
     this.setState({ characters: this.state.characters.concat([finalChar])}, () => {
+      store(this.state)
       finalChar.skills.forEach(s => {
         if (exists(s.affect)) { s.affect(this, hash) }
       })
@@ -88,7 +101,23 @@ class App extends Component {
 
     // Render character
     return <div key={`char-${data.hash}`} className="character-wrapper">
-      <h3>{data.name}</h3>
+      <button
+        className="kill-character"
+        onClick={this.askDelete}
+        data-char-name={data.name}
+        value={data.hash}
+      >Supprimer</button>
+      <div className="flex-row center-v char-title">
+        <h3>{data.name}</h3>
+        <p className="flex-row center-v">
+          Niveau {data.level}
+          {data.level === 0 && <button
+            data-hash={data.hash}
+            className="upgrade-level"
+            onClick={this.upgradeLevel}
+          >+</button>}
+        </p>
+      </div>
       {this.renderLine("PV", <div className="flex-row center-v max-num">
         <input
           type="number"
@@ -107,10 +136,11 @@ class App extends Component {
           onChange={this.updateLuck}
         />
       </div>)}
-      {ones > 0 && <div className="char-line bad">{`Je vais devoir lancer ${ones}D100`}</div>}
+      {ones > 0 && <div className="char-line bad">Je vais devoir lancer <strong>{ones}D100</strong></div>}
       <div className="char-line">{`Je suis un(e) ${data.race.name}`}</div>
       <div className="char-line">{`Je suis un(e) ${data.charClass.name}`}</div>
       {data.special && <div className="char-line">{data.special}</div>}
+      <textarea className="char-motivation" value={`« ${data.motivation} »`} readOnly={true}/>
     </div>
   }
 
@@ -144,7 +174,86 @@ class App extends Component {
 
   // Update luck
   updateLuck = (event) => {
+    const hash = event.currentTarget.dataset.hash
+    const luck = parseInt(event.currentTarget.value, 10)
+    this.setState({ luck: Object.assign(this.state.luck, {[hash]: luck < 0 ? 0 : luck}) })
+  }
 
+  // Change name
+  changeName = (event) => {
+    const hash = event.currentTarget.dataset.hash
+    const name = event.currentTarget.value
+    const char = this.state.characters.filter(c => c.hash === hash)[0]
+
+    // Update state or send warning
+    if (exists(char)) {
+      const newChar = Object.assign(char, {name: name})
+      const index = this.state.characters.indexOf(char)
+      var newArray = this.state.characters.slice()
+      newArray[index] = newChar
+      this.setState({ characters: newArray })
+    } else {
+      console.warn(`Character "${hash}" does not exist (Name updating)`)
+    }
+  }
+
+  // Upgrade to level 1
+  upgradeLevel = (event) => {
+    const hash = event.currentTarget.dataset.hash
+    const char = this.state.characters.filter(c => c.hash === hash)[0]
+
+    // Update state or send warning
+    if (exists(char)) {
+      const newMaxHP = d12(this, hash) + d12(this, hash)
+      const newChar = Object.assign(char, {
+        level: 1,
+        hp_max: newMaxHP,
+        hp:     newMaxHP
+      })
+      const index = this.state.characters.indexOf(char)
+      var newArray = this.state.characters.slice()
+      newArray[index] = newChar
+      this.setState({ characters: newArray }, () => { store(this.state) })
+    } else {
+      console.warn(`Character "${hash}" does not exist (Level upgrading)`)
+    }
+  }
+
+  // Ask to delete
+  askDelete = (event) => {
+    this.setState({
+      overlay: {
+        title: `Êtes-vous sûr(e) de vouloir supprimer ce personnage : "${event.currentTarget.dataset.charName}" ?`,
+        choices: [{
+          label: "Oui",
+          func: this.deleteCharacter,
+          value: event.currentTarget.value
+        }, {
+          label: "Non",
+          func: this.goBack
+        }]
+      }
+    })
+  }
+
+  // Delete character from list
+  deleteCharacter = (event) => {
+    const hash = event.currentTarget.value
+    const char = this.state.characters.filter(c => c.hash === hash)[0]
+    if (exists(char)) {
+      this.setState({ characters: this.state.characters.filter(c => c.hash !== hash) }, () => {
+        store(this.state)
+        this.goBack()
+      })
+    } else {
+      console.warn(`Character "${hash}" does not exist (Delete operation attempt)`)
+      this.goBack()
+    }
+  }
+
+  // Go back from overlay
+  goBack = () => {
+    this.setState({ overlay: null })
   }
 }
 

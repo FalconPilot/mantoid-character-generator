@@ -1,8 +1,10 @@
 // Local data
-import { skills } from '../data/skills'
+import { skills }     from '../data/skills'
+import { petrolhead } from '../data/classes'
 
 // Local functions
-import { exists } from './common'
+import { exists }           from './common'
+import { store }            from './storage'
 
 /*
 **  Skills helpers
@@ -13,7 +15,7 @@ const sklist = [{
   skill: skills.armure(4),
   fuseValue: 4
 }, {
-  description: "Je perd la raison",
+  description: "Je perd la raison (-1 PV)",
   affect: (obj, hash) => {
     const char = obj.state.characters.filter(c => c.hash === hash)[0]
     if (exists(char)) {
@@ -21,32 +23,93 @@ const sklist = [{
       const index = obj.state.characters.indexOf(char)
       var newArray = obj.state.characters.slice()
       newArray[index] = newChar
-      obj.setState({ characters: newArray })
+      obj.setState({ characters: newArray }, () => { store(obj.state) })
     } else {
       console.warn(`Character "${hash} not found, trying to diminish HP by 1 !"`)
     }
-    const val = (exists(obj.state.hp[hash]) ? obj.state.hp[hash] : 0) - 1
-    obj.setState({ hp: Object.assign(obj.state.hp, {[hash]: val < 0 ? 0 : 1}) })
   }
 }, {
   description: "Je sniffe du Pétrol'magie",
   affect: (obj, hash) => {
     const val = (exists(obj.state.luck[hash]) ? obj.state.luck[hash] : 0) - 1
+    obj.setState({ luck: Object.assign(obj.state.luck, {[hash]: val < 0 ? 0 : 1}) }, () => { store(obj.state) })
+  }
+}, {
+  description: "Je torture mes ennemis",
+  skill: skills.brutal
+}, {
+  description: "Je baigne dans le métal",
+  skill: skills.resistance(["Tout"])
+}, {
+  description: "Je viens du futur",
+  affect: (obj, hash) => {
+    const val = (exists(obj.state.luck[hash]) ? obj.state.luck[hash] : 0) + 1
     obj.setState({ luck: Object.assign(obj.state.luck, {[hash]: val < 0 ? 0 : 1}) })
   }
 }, {
-
+  description: "Je vénère les dieux Zoomorphes",
+  affect: (obj, hash) => {
+    const val = (exists(obj.state.luck[hash]) ? obj.state.luck[hash] : 0) + 1
+    obj.setState({ luck: Object.assign(obj.state.luck, {[hash]: val < 0 ? 0 : 1}) })
+  }
+}, {
+  description: "Je dresse des Zazamons"
+}, {
+  description: "Je collectionne les machines à écrire"
+}, {
+  description: "Je me prépare à l'apocalypse"
+}, {
+  description : "J'erre sur la mer du chaos"
+}, {
+  description: "J'ai fui l'empire des mille-pattes humains"
+}, {
+  description: "Je parle à Azathoth"
+}, {
+  description: "J'admire les Voyvodes"
+}, {
+  description: "Je suis un bâtard d'Androgyne-Roi",
+  skill: skills.riche
+}, {
+  description: "J'adore les piercings, tatouages et crêtes de punk"
+}, {
+  description: "Je tuerai mes amis à la fin de cette histoire, sans faire exprès",
+  affect: (obj, hash) => {
+    const val = (exists(obj.state.luck[hash]) ? obj.state.luck[hash] : 0) - 1
+    obj.setState({ luck: Object.assign(obj.state.luck, {[hash]: val < 0 ? 0 : 1}) })
+  }
+}, {
+  description: "Je changerai de sexe chaque fois que je fais 12"
+}, {
+  description: "J'ai fui les geôles royales"
+}, {
+  description: "J'ai fais des études pour créer des mille-pattes humains améliorés"
+}, {
+  description: "Je travaille dans une usine de viande d'Hommes-Porcs",
+  skill: skills.resistance(["Maladies"]),
+  fuseValue: ["Maladies"]
+}, {
+  description: "J'ai fui une tribu de Sumériens"
+}, {
+  description: "Je suis un ancien esclave du Crabe aux Pinces d'or",
+  morphChar: (character) => {
+    return Object.assign(character, {charClass: petrolhead.data})
+  }
 }]
 
 // Get quality skill, can fuse with already existing skills
 export function getSkills(rawChar, value) {
-  const nativeSkills = rawChar.race.skills.concat(rawChar.charClass.skills)
   const item = sklist[value - 1]
+
+  const midChar = exists(item) && exists(item.morphChar)
+    ? item.morphChar(rawChar)
+    : rawChar
+
+  const nativeSkills = midChar.race.skills.concat(rawChar.charClass.skills)
 
   // Character must be altered
   const character = exists(item) && exists(item.affect)
-    ? Object.assign(rawChar, { affect: item.affect })
-    : rawChar
+    ? Object.assign(midChar, { affect: item.affect })
+    : midChar
 
   if (exists(item)
     && exists(item.skill)

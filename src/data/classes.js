@@ -9,7 +9,7 @@ import { skills } from './skills'
 */
 
 // Mathematicien du vide
-const mathematician = {
+export const mathematician = {
   key: "mathematician",
   amt: 2,
   data: {
@@ -19,7 +19,7 @@ const mathematician = {
 }
 
 // Chevalier d'or
-const chevalier = {
+export const chevalier = {
   key: "chevalier_dor",
   amt: 3,
   data: {
@@ -29,7 +29,7 @@ const chevalier = {
 }
 
 // Petrolhead
-const petrolhead = {
+export const petrolhead = {
   key: "petrolhead",
   amt: 3,
   data: {
@@ -39,7 +39,7 @@ const petrolhead = {
 }
 
 // Cyborg
-const cyborg = {
+export const cyborg = {
   key: "cyborg",
   amt: 2,
   data: {
@@ -49,7 +49,7 @@ const cyborg = {
 }
 
 // Pretre
-const pretre = {
+export const pretre = {
   key: "pretre_azathoth",
   amt: 2,
   data: {
