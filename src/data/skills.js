@@ -18,6 +18,11 @@ export const skills = {
 
   // Riche
   riche: {
+    key: "riche",
+    fuse: () => { return {
+      name: "Très riche",
+      description: "Le personnage est très, TRÈS riche. Il peut tout acheter (ou presque). Encore plus balèze que le talent \"Riche\"."
+    }},
     name: "Riche",
     description: "Le personnage est riche. Il peut tout acheter (ou presque)."
   },
@@ -37,10 +42,11 @@ export const skills = {
   // Armure
   armure: function(faces) {
     return {
+      key: "armure",
+      faces: faces,
+      fuse: val => skills.armure(faces + val),
       name: `Armure (D${faces})`,
       description: `Dispose d'une protection naturelle, ou non. Sa protection est de 1D${faces}. Réduisez d'autant les blessures à chaque attaque.`
     }
   }
 }
-
-export default skills

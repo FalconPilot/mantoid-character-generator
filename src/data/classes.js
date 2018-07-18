@@ -2,7 +2,7 @@
 import { generator, dataset } from '../helpers/generators'
 
 // Local data
-import skills from './skills'
+import { skills } from './skills'
 
 /*
 **  Game classes datasets
@@ -13,7 +13,8 @@ const mathematician = {
   key: "mathematician",
   amt: 2,
   data: {
-    name: "Mathématicien du vide"
+    name: "Mathématicien du vide",
+    skills: [ skills.technomagie ]
   }
 }
 
@@ -32,7 +33,8 @@ const petrolhead = {
   key: "petrolhead",
   amt: 3,
   data: {
-    name: "Pétrol'head"
+    name: "Pétrol'head",
+    skills: []
   }
 }
 
@@ -41,7 +43,8 @@ const cyborg = {
   key: "cyborg",
   amt: 2,
   data: {
-    name: "Cyborg"
+    name: "Cyborg",
+    skills: []
   }
 }
 
@@ -50,7 +53,8 @@ const pretre = {
   key: "pretre_azathoth",
   amt: 2,
   data: {
-    name: "Prêtre d'Azathoth"
+    name: "Prêtre d'Azathoth",
+    skills: []
   }
 }
 

@@ -2,7 +2,7 @@
 import { generator, dataset } from '../helpers/generators'
 
 // Local data
-import skills from './skills'
+import { skills } from './skills'
 
 /*
 **  Races datasets

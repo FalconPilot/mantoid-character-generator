@@ -41,6 +41,8 @@ body {
 .flex-row.center-h,
 .flex-col.center-v { justify-content: center; }
 
+.flex-wrap { flex-wrap: wrap; }
+
 /*
 **  Max number input
 */
