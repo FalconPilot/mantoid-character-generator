@@ -43,7 +43,8 @@ class App extends Component {
 
   // Main render
   render() {
-    const noGen = this.state.characters.length >= 3
+    const max = 4
+    const noGen = this.state.characters.length >= max
 
     // Return viewport
     return <div className="flex-col center-v center-h">
@@ -53,7 +54,7 @@ class App extends Component {
       {this.state.overlay && <Overlay {...this.state.overlay}/>}
       <main className="flex-col center-v center-h">
         <button onClick={this.genChar} disabled={noGen}>Générer</button>
-        {noGen && <p className="notice">Pas plus de 3 personnages !</p>}
+        {noGen && <p className="notice">Pas plus de <strong>{max}</strong> personnages !</p>}
         <div className="flex-row center-h flex-wrap">
           {this.state.characters.map(this.renderCharacter)}
         </div>

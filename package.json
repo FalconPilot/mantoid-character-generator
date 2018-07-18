@@ -2,6 +2,7 @@
   "name": "mantoid-character-generator",
   "version": "0.2.0",
   "private": true,
+  "homepage": "https://fpilot.fr/mantoid",
   "dependencies": {
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
