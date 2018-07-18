@@ -1,0 +1,83 @@
+/*
+**  Global CSS
+*/
+
+*,
+*:before,
+*:after { box-sizing: border-box; }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #333;
+  color: #FFF;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/*
+**  Flex classes
+*/
+
+.flex-row,
+.flex-col { display: flex; }
+
+.flex-col { flex-direction: column; }
+
+.flex-row.center-v,
+.flex-col.center-h { align-items: center; }
+
+.flex-row.center-h,
+.flex-col.center-v { justify-content: center; }
+
+/*
+**  Max number input
+*/
+
+.max-num > input[type=number] {
+  width: 2em;
+  height: 2em;
+  font-size: 1em;
+  font-family: sans-serif;
+  background-color: #FFF;
+  color: #333;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+  text-align: center;
+}
+
+.max-num > p {
+  font-size: 1em;
+  margin: 0 0 0 3px;
+}
+
+/*
+**  Character display classes
+*/
+
+div.character-wrapper {
+  width: 500px;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid #FFF;
+  border-radius: 5px;
+}
+
+div.char-line {
+  border-bottom: 1px dashed #CCC;
+  padding: 10px 5px;
+  margin: 5px 0;
+}
+
+div.char-line > div { margin-left: auto; }
